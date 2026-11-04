@@ -1,0 +1,21 @@
+{
+  "name": "data-clerk-skills",
+  "owner": {
+    "name": "Bohdan Meshcheriakov"
+  },
+  "metadata": {
+    "description": "Skills for apps hosted on Data Clerk (data-clerk.com)",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "data-clerk",
+      "description": "Deploy, secrets (sops), migrations, backups and troubleshooting for apps on Data Clerk hosting",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/deploy-data-clerk"
+      ]
+    }
+  ]
+}
