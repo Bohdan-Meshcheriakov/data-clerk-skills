@@ -37,3 +37,7 @@ Then:
 ```
 
 The in-repo install above is still recommended: it travels with the repo, works with every agent, and keeps project values in `PROJECT.md`.
+
+## License
+
+Proprietary. Data Clerk customers may use and adapt these files in their own repositories for apps hosted on Data Clerk; see [LICENSE](LICENSE).
