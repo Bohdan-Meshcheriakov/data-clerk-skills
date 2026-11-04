@@ -1,0 +1,58 @@
+name: Deploy to cluster
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-cluster-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  IMAGE: us-central1-docker.pkg.dev/data-clerk-chat/__NAMESPACE__/__APP__
+
+jobs:
+  image:
+    name: Build & push image
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute tag
+        id: meta
+        run: echo "tag=$(date -u +%Y%m%d%H%M%S)-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: __WIF_PROVIDER__
+          service_account: __CI_SERVICE_ACCOUNT__
+
+      - name: Log in to Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy-data-clerk/Dockerfile
+          platforms: linux/amd64
+          push: true
+          build-args: APP_VERSION=${{ steps.meta.outputs.tag }}
+          tags: ${{ env.IMAGE }}:${{ steps.meta.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
