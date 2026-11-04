@@ -25,6 +25,7 @@ try {
     if (Test-Path $t) { Remove-Item -Recurse -Force $t }
     Copy-Item -Recurse (Join-Path $src $d) $t
   }
+  Copy-Item -Force (Join-Path $src "..\..\LICENSE") (Join-Path $Dest "LICENSE")
   $proj = Join-Path $Dest "PROJECT.md"
   if (-not (Test-Path $proj)) { Copy-Item (Join-Path $src "assets\PROJECT.md") $proj }
 

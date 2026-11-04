@@ -28,6 +28,7 @@ for d in references scripts assets; do
   cp -R "$src/$d" "$DEST/$d"
 done
 chmod +x "$DEST/scripts/"*.sh
+cp "$src/../../LICENSE" "$DEST/LICENSE"
 [ -f "$DEST/PROJECT.md" ] || cp "$src/assets/PROJECT.md" "$DEST/PROJECT.md"
 
 mkdir -p ".claude/skills/$SKILL"
