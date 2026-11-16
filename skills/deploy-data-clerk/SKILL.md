@@ -53,7 +53,22 @@ sops unset deploy-data-clerk/secrets.env '["OLD_KEY"]'
 sops decrypt deploy-data-clerk/secrets.env | cut -d= -f1
 ```
 
-Then commit and push to `main`; it is live in ~5 min. When the user has to supply the value (an API key from some dashboard), have them run the `sops set` line themselves, or paste the value only into their own terminal. The full guide (keys, where they live, rotating, gotchas) is in `references/secrets.md`.
+Then commit, run the leak check below, and push to `main`; it is live in ~5 min. When the user has to supply the value (an API key from some dashboard), have them run the `sops set` line themselves, or paste the value only into their own terminal. The full guide (keys, where they live, rotating, gotchas) is in `references/secrets.md`.
+
+### Before every push: leak check
+
+A pushed plaintext secret is leaked for good. Git history keeps it even if a later commit encrypts it, and the only fix is rotating it at the provider. Before **every** `git push`, run this from the repo root. It checks every line that any unpushed commit adds to a `secrets.env`, and prints only key names, never values:
+
+```bash
+git fetch -q origin && git log -p --format= origin/main..HEAD -- '*secrets.env' | grep -E '^\+[^+]' | grep -vE '^\+(sops_|#|$)|=ENC\[' | cut -c2- | cut -d= -f1
+```
+
+```powershell
+git fetch -q origin; git log -p --format= origin/main..HEAD -- '*secrets.env' | Where-Object { $_ -match '^\+[^+]' -and $_ -notmatch '^\+(sops_|#|$)|=ENC\[' } | ForEach-Object { ($_.Substring(1) -split '=', 2)[0] }
+```
+
+- **No output**: nothing leaked, so push.
+- **Any key name printed**: that key is in plaintext in at least one unpushed commit. **Do not push.** Re-encrypt (`sops encrypt -i <file>` or `sops set`), then rewrite the unpushed commits so that no commit contains the plaintext (e.g. `git reset --soft origin/main` and commit again). Run the check again until it prints nothing.
 
 ## Database
 

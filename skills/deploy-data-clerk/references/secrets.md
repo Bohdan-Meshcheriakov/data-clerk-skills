@@ -52,7 +52,7 @@ The value argument is a JSON string: wrap it in `'"…"'`. A value with a double
 
 PowerShell 7.3+ takes the same command unchanged. Old Windows PowerShell 5.1 strips the inner quotes, so escape them: `sops set deploy-data-clerk/secrets.env '[\"KEY\"]' '\"value\"'`. If quoting still fights you, have the user run `sops deploy-data-clerk/secrets.env` with `$env:EDITOR = "notepad"` and add the line by hand.
 
-After any change: `git add deploy-data-clerk/secrets.env && git commit -m "secrets: add KEY" && git push`. Live in ~5 min.
+After any change: `git add deploy-data-clerk/secrets.env && git commit -m "secrets: add KEY"`, run the leak check from SKILL.md ("Before every push"), and `git push` only if it prints nothing. Live in ~5 min.
 
 When a value must come from the user (an API key from a provider dashboard), don't ask them to paste it into the chat. Give them the exact `sops set` command with a placeholder to run in their own terminal, then verify only that the key name exists.
 
