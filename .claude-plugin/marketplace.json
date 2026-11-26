@@ -4,8 +4,8 @@
     "name": "Bohdan Meshcheriakov"
   },
   "metadata": {
-    "description": "Skills for apps hosted on Data Clerk (data-clerk.com)",
-    "version": "1.0.0"
+    "description": "Skills from Data Clerk (data-clerk.com): hosting on Data Clerk and Human Touch, real people as a tool for AI agents",
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -15,6 +15,15 @@
       "strict": false,
       "skills": [
         "./skills/deploy-data-clerk"
+      ]
+    },
+    {
+      "name": "human-touch",
+      "description": "Ask real people to check what your agent can't be sure of: approvals before risky actions, labels, ratings, A/B picks, web checks and native-speaker text checks (humantouch.data-clerk.com)",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/human-touch"
       ]
     }
   ]
